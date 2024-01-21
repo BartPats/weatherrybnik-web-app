@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+ </div>
+    <div class="image-container">
+        <a href="https://i.ibb.co/CtbrRvH/hostersi.png" target="_blank">
+            <img src="https://i.ibb.co/CtbrRvH/hostersi.png" alt="Thumbnail 1" class="thumbnail">
+        </a>
+        <a href="https://i.ibb.co/QbJmxDP/rybnik-god-o.png" target="_blank">
+            <img src="https://i.ibb.co/QbJmxDP/rybnik-god-o.png" alt="Thumbnail 2" class="thumbnail">
+        </a>
+    </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rybnik Weather and Air Quality</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h1 {
+            color: #0d6efd;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        .section h2 {
+            color: #4a4a4a;
+        }
+
+        .section p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #666;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 10px;
+            }
+
+            .section p {
+                font-size: 1em;
+            }
+        }
+
+        /* Styles for Images and Ampersand */
+        .image-container {
+            display: flex;
+            align-items: flex-start; /* Align images at the top */
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        img.thumbnail {
+            max-width: 100px; /* Adjust the image size as needed */
+            margin: 0 10px; /* Adjust the spacing between images */
+        }
+
+        span {
+            font-size: 20px; /* Adjust font size of the ampersand */
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather and Air Quality in Rybnik, Poland</h1>
+        <div id="weather" class="section">
+            <h2>Current Weather</h2>
+            <p id="weatherData">Loading weather data...</p>
+        </div>
+        <div id="airQuality" class="section">
+            <h2>Air Quality Index</h2>
+            <p id="airQualityData">Loading air quality data...</p>
+        </div>
+   
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const weatherApiKey = '927348320e0400a06b3a134b8b0770cd'; // Your OpenWeatherMap API key
+            const rybnikLat = 50.1022;
+            const rybnikLon = 18.5463;
+            const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${rybnikLat}&lon=${rybnikLon}&appid=${weatherApiKey}&units=metric`;
+
+            axios.get(weatherUrl)
+                .then(function(response) {
+                    const weatherData = response.data;
+                    const temperature = weatherData.main.temp;
+                    const condition = weatherData.weather[0].main;
+                    document.getElementById('weatherData').textContent = 
+                        `Temperature: ${temperature}°C, Condition: ${condition}`;
+                })
+                .catch(function(error) {
+                    console.log(error);
+                    document.getElementById('weatherData').textContent = 
+                        'Failed to load weather data';
+                });
+
+            const airQualityApiKey = '5b12862a573b3c9672bd8ba33b0f51645768acc7'; // Your WAQI API key
+            const rybnikStation = 'rybnik'; // Station ID for Rybnik (replace if necessary)
+            const airQualityUrl = `https://api.waqi.info/feed/${rybnikStation}/?token=${airQualityApiKey}`;
+
+            axios.get(airQualityUrl)
+                .then(function(response) {
+                    const aqiData = response.data.data.aqi;
+                    document.getElementById('airQualityData').textContent = 
+                        `Air Quality Index (AQI): ${aqiData}`;
+                })
+                .catch(function(error) {
+                    console.log(error);
+                    document.getElementById('airQualityData').textContent = 
+                        'Failed to load air quality data';
+                });
+        });
+    </script>
+</body>
+</html>
