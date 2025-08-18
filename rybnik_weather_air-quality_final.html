@@ -1,14 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
- </div>
-    <div class="image-container">
-        <a href="https://i.ibb.co/CtbrRvH/hostersi.png" target="_blank">
-            <img src="https://i.ibb.co/CtbrRvH/hostersi.png" alt="Thumbnail 1" class="thumbnail">
-        </a>
-        <a href="https://i.ibb.co/QbJmxDP/rybnik-god-o.png" target="_blank">
-            <img src="https://i.ibb.co/QbJmxDP/rybnik-god-o.png" alt="Thumbnail 2" class="thumbnail">
-        </a>
-    </div>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -86,6 +77,14 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
+    <div class="image-container">
+        <a href="https://i.ibb.co/CtbrRvH/hostersi.png" target="_blank">
+            <img src="https://i.ibb.co/CtbrRvH/hostersi.png" alt="Thumbnail 1" class="thumbnail">
+        </a>
+        <a href="https://i.ibb.co/QbJmxDP/rybnik-god-o.png" target="_blank">
+            <img src="https://i.ibb.co/QbJmxDP/rybnik-god-o.png" alt="Thumbnail 2" class="thumbnail">
+        </a>
+    </div>
     <div class="container">
         <h1>Weather and Air Quality in Rybnik, Poland</h1>
         <div id="weather" class="section">
@@ -96,7 +95,8 @@
             <h2>Air Quality Index</h2>
             <p id="airQualityData">Loading air quality data...</p>
         </div>
-   
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const weatherApiKey = '927348320e0400a06b3a134b8b0770cd'; // Your OpenWeatherMap API key
