@@ -9,8 +9,9 @@
             font-family: 'Arial', sans-serif;
             text-align: center;
             padding: 20px;
-            background-color: #f4f4f4;
+            background: linear-gradient(to bottom, #a8e0ff, #f4f4f4);
             color: #333;
+            animation: pageFadeIn 1s ease-in;
         }
 
         h1 {
@@ -24,6 +25,7 @@
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            animation: slideUp 1s ease-out;
         }
 
         .section {
@@ -32,6 +34,12 @@
             border: 1px solid #ddd;
             border-radius: 8px;
             background-color: #fff;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .section h2 {
@@ -67,11 +75,47 @@
         img.thumbnail {
             max-width: 100px; /* Adjust the image size as needed */
             margin: 0 10px; /* Adjust the spacing between images */
+            transition: transform 0.3s;
+        }
+
+        img.thumbnail:hover {
+            transform: scale(1.1);
         }
 
         span {
             font-size: 20px; /* Adjust font size of the ampersand */
             font-weight: bold;
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeInText 1s forwards;
+        }
+
+        @keyframes pageFadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInText {
+            to {
+                opacity: 1;
+            }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -109,8 +153,10 @@
                     const weatherData = response.data;
                     const temperature = weatherData.main.temp;
                     const condition = weatherData.weather[0].main;
-                    document.getElementById('weatherData').textContent = 
+                    const weatherEl = document.getElementById('weatherData');
+                    weatherEl.textContent =
                         `Temperature: ${temperature}°C, Condition: ${condition}`;
+                    weatherEl.classList.add('fade-in');
                 })
                 .catch(function(error) {
                     console.log(error);
@@ -125,8 +171,10 @@
             axios.get(airQualityUrl)
                 .then(function(response) {
                     const aqiData = response.data.data.aqi;
-                    document.getElementById('airQualityData').textContent = 
+                    const airEl = document.getElementById('airQualityData');
+                    airEl.textContent =
                         `Air Quality Index (AQI): ${aqiData}`;
+                    airEl.classList.add('fade-in');
                 })
                 .catch(function(error) {
                     console.log(error);
