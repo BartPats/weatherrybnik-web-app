@@ -18,6 +18,20 @@
             color: #0d6efd;
         }
 
+        #changeLocation {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #0d6efd;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #changeLocation:hover {
+            background-color: #0b5ed7;
+        }
+
         .container {
             max-width: 600px;
             margin: auto;
@@ -92,6 +106,53 @@
             animation: fadeInText 1s forwards;
         }
 
+        #weatherIcon {
+            width: 100px;
+            height: 100px;
+        }
+
+        .sunny {
+            animation: rotateSun 10s linear infinite;
+        }
+
+        @keyframes rotateSun {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .cloudy {
+            animation: floatCloud 3s ease-in-out infinite;
+        }
+
+        @keyframes floatCloud {
+            0% {
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(10px);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .rainy {
+            animation: rainDrop 1s linear infinite;
+        }
+
+        @keyframes rainDrop {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(5px);
+            }
+        }
+
         @keyframes pageFadeIn {
             from {
                 opacity: 0;
@@ -130,9 +191,11 @@
         </a>
     </div>
     <div class="container">
-        <h1>Weather and Air Quality in Rybnik, Poland</h1>
+        <h1>Weather and Air Quality in <span id="locationName">Rybnik, Poland</span></h1>
+        <button id="changeLocation">Change Location</button>
         <div id="weather" class="section">
             <h2>Current Weather</h2>
+            <img id="weatherIcon" alt="Weather icon" />
             <p id="weatherData">Loading weather data...</p>
         </div>
         <div id="airQuality" class="section">
@@ -143,44 +206,79 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const weatherApiKey = '927348320e0400a06b3a134b8b0770cd'; // Your OpenWeatherMap API key
-            const rybnikLat = 50.1022;
-            const rybnikLon = 18.5463;
-            const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${rybnikLat}&lon=${rybnikLon}&appid=${weatherApiKey}&units=metric`;
+            const weatherApiKey = '927348320e0400a06b3a134b8b0770cd';
+            const airQualityApiKey = '5b12862a573b3c9672bd8ba33b0f51645768acc7';
 
-            axios.get(weatherUrl)
-                .then(function(response) {
-                    const weatherData = response.data;
-                    const temperature = weatherData.main.temp;
-                    const condition = weatherData.weather[0].main;
-                    const weatherEl = document.getElementById('weatherData');
-                    weatherEl.textContent =
-                        `Temperature: ${temperature}°C, Condition: ${condition}`;
-                    weatherEl.classList.add('fade-in');
-                })
-                .catch(function(error) {
-                    console.log(error);
-                    document.getElementById('weatherData').textContent = 
-                        'Failed to load weather data';
-                });
+            function fetchData(lat, lon, locationLabel) {
+                const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${weatherApiKey}&units=metric`;
 
-            const airQualityApiKey = '5b12862a573b3c9672bd8ba33b0f51645768acc7'; // Your WAQI API key
-            const rybnikStation = 'rybnik'; // Station ID for Rybnik (replace if necessary)
-            const airQualityUrl = `https://api.waqi.info/feed/${rybnikStation}/?token=${airQualityApiKey}`;
+                axios.get(weatherUrl)
+                    .then(function(response) {
+                        const weatherData = response.data;
+                        const temperature = weatherData.main.temp;
+                        const condition = weatherData.weather[0].main;
+                        const iconCode = weatherData.weather[0].icon;
+                        const weatherEl = document.getElementById('weatherData');
+                        const iconEl = document.getElementById('weatherIcon');
+                        const locationEl = document.getElementById('locationName');
 
-            axios.get(airQualityUrl)
-                .then(function(response) {
-                    const aqiData = response.data.data.aqi;
-                    const airEl = document.getElementById('airQualityData');
-                    airEl.textContent =
-                        `Air Quality Index (AQI): ${aqiData}`;
-                    airEl.classList.add('fade-in');
-                })
-                .catch(function(error) {
-                    console.log(error);
-                    document.getElementById('airQualityData').textContent = 
-                        'Failed to load air quality data';
-                });
+                        weatherEl.textContent = `Temperature: ${temperature}°C, Condition: ${condition}`;
+                        weatherEl.classList.add('fade-in');
+
+                        iconEl.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+                        iconEl.className = '';
+                        if (iconCode.includes('01')) {
+                            iconEl.classList.add('sunny');
+                        } else if (iconCode.includes('02') || iconCode.includes('03') || iconCode.includes('04')) {
+                            iconEl.classList.add('cloudy');
+                        } else if (iconCode.includes('09') || iconCode.includes('10') || iconCode.includes('11')) {
+                            iconEl.classList.add('rainy');
+                        }
+
+                        if (locationLabel) {
+                            locationEl.textContent = locationLabel;
+                        }
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                        document.getElementById('weatherData').textContent = 'Failed to load weather data';
+                    });
+
+                const airQualityUrl = `https://api.waqi.info/feed/geo:${lat};${lon}/?token=${airQualityApiKey}`;
+
+                axios.get(airQualityUrl)
+                    .then(function(response) {
+                        const aqiData = response.data.data.aqi;
+                        const airEl = document.getElementById('airQualityData');
+                        airEl.textContent = `Air Quality Index (AQI): ${aqiData}`;
+                        airEl.classList.add('fade-in');
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                        document.getElementById('airQualityData').textContent = 'Failed to load air quality data';
+                    });
+            }
+
+            document.getElementById('changeLocation').addEventListener('click', function() {
+                const city = prompt('Enter city name:');
+                if (!city) return;
+                const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${weatherApiKey}`;
+                axios.get(geoUrl)
+                    .then(function(response) {
+                        if (response.data && response.data[0]) {
+                            const { lat, lon, name, country } = response.data[0];
+                            const label = `${name}, ${country}`;
+                            fetchData(lat, lon, label);
+                        } else {
+                            alert('Location not found');
+                        }
+                    })
+                    .catch(function() {
+                        alert('Failed to fetch location');
+                    });
+            });
+
+            fetchData(50.1022, 18.5463, 'Rybnik, Poland');
         });
     </script>
 </body>
